@@ -76,11 +76,16 @@ class StoreRasterFmtDataToPrintBufferGraphicsSubCmd extends DataSubCmd implement
     
     public function asPng()
     {
-        $pbmBlob = $this -> asPbm();
-        $im = new Imagick();
-        $im -> readImageBlob($pbmBlob, 'pbm');
-        $im->setResourceLimit(6, 1); // Prevent libgomp1 segfaults, grumble grumble.
-        $im -> setFormat('png');
-        return $im -> getImageBlob();
+        try {
+            $pbmBlob = $this->asPbm();
+            $im = new Imagick();
+            $im->readImageBlob($pbmBlob, 'pbm');
+            $im->setResourceLimit(6, 1); // Prevent libgomp1 segfaults, grumble grumble.
+            $im->setFormat('png');
+            return $im->getImageBlob();
+        } catch (\Exception $e) {
+            // Log the error or proceed with alternative actions
+            return null; // Proceed without throwing the exception, adjust as necessary
     }
+}
 }
